@@ -21,7 +21,7 @@ You must download the application code from the repository and clone it to your 
 
 ## Links
 
-[](https://drive.google.com/file/d/12CWOgTkTs-enQzWMJA4UHOOq_VVMeQ1F/view?usp=sharing)
+[Link to Demo Video](https://drive.google.com/file/d/12CWOgTkTs-enQzWMJA4UHOOq_VVMeQ1F/view?usp=sharing)
 
 [Link to Application Repository](https://github.com/ArmondR/Employee-Tracker)
 
