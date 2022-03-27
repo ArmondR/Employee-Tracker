@@ -24,7 +24,7 @@ const prompt = () => {
                 'Add a role',
                 'Add an employee',
                 'Update an employee role',
-                'quit'
+                'Quit'
             ]
         }
     ]).then((answers) => {
@@ -47,11 +47,19 @@ const prompt = () => {
             addDepartment();
         }
 
+        if (choices === "Add a roll") {
+            addRole();
+        }
+
+        if (choices === "Add an employee") {
+            addEmployee();
+        }
+
         if (choices === "Quit") {
             db.end;
         }
     })
-}
+};
 
 // shows all departments 
 showAllDepartments = () => {
@@ -130,46 +138,108 @@ addDepartment = () => {
             }
 
         }
-    ]) .then()
+    ]) .then(answer => {
+        const sql = `INSERT INTO department (name) VALUES ?`;
+
+        db.query(sql, answer.name, (err, res) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(answer.name + ' added to department database.');
+        })
+    })
 };
 
 // Adds role to database
 addRole = () => {
 
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'roleName',
+        message: 'Enter the role you wish to add.',
+        validate: roleName => {
+            if (roleName) {
+                return true;
+            } else {
+                console.log('Please enter new role');
+                return false;
+            }
+
+        }
+
+    },
+    {
+        type: 'input',
+        name: 'salary',
+        message: 'What is the role salary?',
+        validate: salary => {
+            // checks if given input is a number 
+            if (isNAN(salary)) {
+                return true;
+            } else {
+                console.log('Please enter a salary');
+                return false;
+            }
+        }
+    }
+]).then()
+
 };
 
 // Adds employees to database
 addEmployee = () => {
-    inquirer.prompt([
+
+    // access role table to pull options 
+    db.query(`SELECT * FROM role`, (err, res) => {
+        if(err) throw err;
+
+        inquirer.prompt([
+            {
+            type: 'input',
+            name: 'firstName',
+            message: 'Enter employees first name.',
+            validate: firstName => {
+               if (firstName) {
+                   return true;
+               } else {
+                   console.log('Please enter a first name');
+                   return false;
+               }
+            }
+        },
         {
-        type: 'input',
-        name: 'firstName',
-        message: 'Enter employees first name.',
-        validate: firstName => {
-           if (firstName) {
-               return true;
-           } else {
-               console.log('Please enter a first name');
-               return false;
-           }
+          type: 'input',
+          name: 'lastName',
+          message: 'Enter employees last name.',
+          validate: lastName => {
+              if(lastName) {
+                  return true;
+              } else {
+                  console.log('Please enter employees last name');
+                  return false;
+              }
+          }  
+        },
+        {
+            name: 'role',
+            type: 'list',
+            message: 'Select employee role.',
+            choices: () => {
+                const roles = [];
+                for (let i = 0; i < res.length; i++) {
+                    roles.push(res[i].title);
+                }
+                return roles;
+            },
+
         }
-    },
-    {
-      type: 'input',
-      name: 'lastName',
-      message: 'Enter employees last name.',
-      validate: lastName => {
-          if(lastName) {
-              return true;
-          } else {
-              console.log('Please enter employees last name');
-              return false;
-          }
-      }  
-    }
-  ]).then(response => {
-      const params = [response.firstName, response.lastName]
-  })
+      ]).then(response => {
+          const params = [response.firstName, response.lastName]
+      })
+
+    });
+    
 };
 
 prompt();
